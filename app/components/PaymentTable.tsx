@@ -270,21 +270,6 @@ export default function PaymentTable({
                                 <p style={{ margin: 0 }}>{selectedPayment.customerName} ({selectedPayment.customerEmail})</p>
                                 <p style={{ margin: 0 }}>{selectedPayment.customerPhone}</p>
                             </div>
-
-                            {((selectedPayment as any).rawData?.data?.order?.customer_details?.customer_fields?.length > 0) && (
-                                <div style={{ marginBottom: "16px" }}>
-                                    <p style={{ margin: "0 0 8px", fontSize: "0.875rem", color: "var(--text-secondary)" }}>Custom Form Fields (From Webhook)</p>
-                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", background: "var(--bg-primary)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
-                                        {((selectedPayment as any).rawData.data.order.customer_details.customer_fields).map((field: any, idx: number) => (
-                                            <div key={idx}>
-                                                <p style={{ margin: "0 0 4px", fontSize: "0.75rem", color: "var(--text-secondary)" }}>{field.title}</p>
-                                                <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--text-primary)", wordBreak: "break-word" }}>{field.value || "—"}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
                             <div>
                                 <p style={{ margin: "0 0 8px", fontSize: "0.875rem", color: "var(--text-secondary)" }}>Raw Data JSON</p>
                                 <pre style={{
