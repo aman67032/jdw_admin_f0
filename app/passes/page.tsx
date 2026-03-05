@@ -30,7 +30,10 @@ export default function DayPassesPage() {
     const handleSync = async () => {
         setSyncing(true);
         try {
-            await fetch(`${API_BASE}/payments/sync/day_pass`);
+            const token = localStorage.getItem("jdw_admin_token");
+            await fetch(`${API_BASE}/payments/sync/day_pass`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             await fetchPayments();
         } catch (err) {
             console.error("Sync failed:", err);

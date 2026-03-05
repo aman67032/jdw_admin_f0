@@ -30,7 +30,10 @@ export default function OpenStudioPassPage() {
     const handleSync = async () => {
         setSyncing(true);
         try {
-            await fetch(`${API_BASE}/payments/sync/open_studio`);
+            const token = localStorage.getItem("jdw_admin_token");
+            await fetch(`${API_BASE}/payments/sync/open_studio`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             await fetchPayments();
         } catch (err) {
             console.error("Sync failed:", err);

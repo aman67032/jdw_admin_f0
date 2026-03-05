@@ -26,7 +26,10 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(`${API_BASE}/payments/stats/summary`);
+      const token = localStorage.getItem("jdw_admin_token");
+      const res = await fetch(`${API_BASE}/payments/stats/summary`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       const data = await res.json();
       if (data.success) {
         setSummary(data.data);
