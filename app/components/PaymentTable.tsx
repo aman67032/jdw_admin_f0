@@ -244,41 +244,101 @@ export default function PaymentTable({
                     display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)"
                 }}>
                     <div className="modal-content" onClick={e => e.stopPropagation()} style={{
-                        background: "var(--card-bg)", border: "1px solid var(--border-color)",
-                        borderRadius: "12px", width: "90%", maxWidth: "600px", maxHeight: "85vh",
-                        display: "flex", flexDirection: "column", boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5)"
+                        background: "var(--bg-primary)", border: "1px solid var(--border-primary)",
+                        borderRadius: "16px", width: "95%", maxWidth: "700px", maxHeight: "85vh",
+                        display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
                     }}>
                         <div className="modal-header" style={{
-                            padding: "16px 24px", borderBottom: "1px solid var(--border-color)",
-                            display: "flex", justifyContent: "space-between", alignItems: "center"
+                            padding: "20px 28px", borderBottom: "1px solid var(--border-primary)",
+                            display: "flex", justifyContent: "space-between", alignItems: "center",
+                            background: "var(--bg-card)", borderTopLeftRadius: "16px", borderTopRightRadius: "16px"
                         }}>
-                            <h3 style={{ margin: 0, fontSize: "1.25rem", color: "var(--text-primary)" }}>
+                            <h3 style={{ margin: 0, fontSize: "1.25rem", color: "var(--text-primary)", fontWeight: 700 }}>
                                 Payment Details
                             </h3>
                             <button onClick={() => setSelectedPayment(null)} style={{
-                                background: "none", border: "none", color: "var(--text-secondary)",
-                                cursor: "pointer", fontSize: "1.5rem", padding: "4px"
-                            }}>&times;</button>
+                                background: "rgba(255,255,255,0.05)", border: "1px solid var(--border-primary)", color: "var(--text-secondary)",
+                                cursor: "pointer", fontSize: "1.25rem", padding: "4px 8px", borderRadius: "8px",
+                                transition: "all 0.2s"
+                            }}
+                                onMouseOver={(e) => { e.currentTarget.style.color = "white"; e.currentTarget.style.background = "rgba(255,255,255,0.1)"; }}
+                                onMouseOut={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }}
+                            >&times;</button>
                         </div>
-                        <div className="modal-body" style={{ padding: "24px", overflowY: "auto" }}>
-                            <div style={{ marginBottom: "16px" }}>
-                                <p style={{ margin: "0 0 4px", fontSize: "0.875rem", color: "var(--text-secondary)" }}>Order ID</p>
-                                <code style={{ color: "var(--accent-primary)" }}>{selectedPayment.orderId}</code>
+                        <div className="modal-body" style={{ padding: "28px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "24px" }}>
+
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+                                {/* Transaction Info Card */}
+                                <div style={{ background: "var(--bg-card)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)" }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+                                        <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: accentColor }}></div>
+                                        <h4 style={{ margin: 0, color: "var(--text-primary)", fontSize: "0.95rem", fontWeight: 600 }}>Transaction Info</h4>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px" }}>
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Order ID</span>
+                                            <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)", fontSize: "0.85rem" }}>{selectedPayment.orderId}</span>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px" }}>
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Status</span>
+                                            <span className={`badge ${getStatusBadge(selectedPayment.status)}`} style={{ fontSize: "0.75rem" }}>{selectedPayment.status}</span>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px" }}>
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Amount Paid</span>
+                                            <span style={{ color: "var(--accent-success)", fontWeight: 700 }}>₹{selectedPayment.amount?.toLocaleString("en-IN")}</span>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px" }}>
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Payment Method</span>
+                                            <span style={{ color: "var(--text-primary)", textTransform: "capitalize", fontSize: "0.9rem" }}>{selectedPayment.paymentMethod || "N/A"}</span>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Payment Time</span>
+                                            <span style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>{selectedPayment.paymentTime ? new Date(selectedPayment.paymentTime).toLocaleString("en-IN") : "N/A"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Customer Details Card */}
+                                <div style={{ background: "var(--bg-card)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)" }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+                                        <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--accent-info)" }}></div>
+                                        <h4 style={{ margin: 0, color: "var(--text-primary)", fontSize: "0.95rem", fontWeight: 600 }}>Customer Details</h4>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px" }}>
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Name</span>
+                                            <span style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>{selectedPayment.customerName || "N/A"}</span>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px" }}>
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Email</span>
+                                            <span style={{ color: "var(--text-primary)", fontSize: "0.9rem", wordBreak: "break-all", textAlign: "right" }}>{selectedPayment.customerEmail || "N/A"}</span>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Phone</span>
+                                            <span style={{ color: "var(--text-primary)", fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>{selectedPayment.customerPhone || "N/A"}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div style={{ marginBottom: "16px" }}>
-                                <p style={{ margin: "0 0 4px", fontSize: "0.875rem", color: "var(--text-secondary)" }}>Customer</p>
-                                <p style={{ margin: 0 }}>{selectedPayment.customerName} ({selectedPayment.customerEmail})</p>
-                                <p style={{ margin: 0 }}>{selectedPayment.customerPhone}</p>
-                            </div>
-                            <div>
-                                <p style={{ margin: "0 0 8px", fontSize: "0.875rem", color: "var(--text-secondary)" }}>Raw Data JSON</p>
-                                <pre style={{
-                                    background: "#111827", padding: "16px", borderRadius: "8px",
-                                    fontSize: "0.80rem", color: "#e5e7eb", overflowX: "auto", border: "1px solid #374151"
-                                }}>
-                                    {JSON.stringify((selectedPayment as any).rawData || selectedPayment, null, 2)}
-                                </pre>
-                            </div>
+
+                            {/* Additional Info / Custom Fields */}
+                            {(selectedPayment as any).customFields && Object.keys((selectedPayment as any).customFields).length > 0 && (
+                                <div style={{ background: "var(--bg-card)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-primary)" }}>
+                                    <h4 style={{ margin: "0 0 16px", color: "var(--text-primary)", fontSize: "0.95rem", fontWeight: 600 }}>Contact & Address Details</h4>
+                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+                                        {Object.entries((selectedPayment as any).customFields).map(([key, value]) => {
+                                            if (!value || key === "_id") return null;
+                                            return (
+                                                <div key={key} style={{ display: "flex", flexDirection: "column", gap: "4px", background: "var(--bg-secondary)", padding: "12px", borderRadius: "8px" }}>
+                                                    <span style={{ color: "var(--text-muted)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                                                    <span style={{ color: "var(--text-primary)", fontSize: "0.95rem" }}>{String(value)}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
                         </div>
                     </div>
                 </div>
