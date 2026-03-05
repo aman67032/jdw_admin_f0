@@ -39,6 +39,7 @@ export default function PaymentTable({
 }: PaymentTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [importOrderId, setImportOrderId] = useState("");
+    const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
 
     const filteredPayments = payments.filter((p) => {
         const term = searchTerm.toLowerCase();
@@ -185,6 +186,7 @@ export default function PaymentTable({
                                 <th>Status</th>
                                 <th>Method</th>
                                 <th>Date</th>
+                                <th>Details</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -218,10 +220,67 @@ export default function PaymentTable({
                                             })
                                             : "—"}
                                     </td>
+                                    <td>
+                                        <button
+                                            onClick={() => setSelectedPayment(payment)}
+                                            className="btn btn-secondary"
+                                            style={{ padding: "4px 8px", fontSize: "0.75rem" }}
+                                        >
+                                            View Info
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                </div>
+            )}
+
+            {/* Full Info Modal */}
+            {selectedPayment && (
+                <div className="modal-backdrop" onClick={() => setSelectedPayment(null)} style={{
+                    position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: "rgba(0,0,0,0.7)", zIndex: 1000,
+                    display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)"
+                }}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{
+                        background: "var(--card-bg)", border: "1px solid var(--border-color)",
+                        borderRadius: "12px", width: "90%", maxWidth: "600px", maxHeight: "85vh",
+                        display: "flex", flexDirection: "column", boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5)"
+                    }}>
+                        <div className="modal-header" style={{
+                            padding: "16px 24px", borderBottom: "1px solid var(--border-color)",
+                            display: "flex", justifyContent: "space-between", alignItems: "center"
+                        }}>
+                            <h3 style={{ margin: 0, fontSize: "1.25rem", color: "var(--text-primary)" }}>
+                                Payment Details
+                            </h3>
+                            <button onClick={() => setSelectedPayment(null)} style={{
+                                background: "none", border: "none", color: "var(--text-secondary)",
+                                cursor: "pointer", fontSize: "1.5rem", padding: "4px"
+                            }}>&times;</button>
+                        </div>
+                        <div className="modal-body" style={{ padding: "24px", overflowY: "auto" }}>
+                            <div style={{ marginBottom: "16px" }}>
+                                <p style={{ margin: "0 0 4px", fontSize: "0.875rem", color: "var(--text-secondary)" }}>Order ID</p>
+                                <code style={{ color: "var(--accent-primary)" }}>{selectedPayment.orderId}</code>
+                            </div>
+                            <div style={{ marginBottom: "16px" }}>
+                                <p style={{ margin: "0 0 4px", fontSize: "0.875rem", color: "var(--text-secondary)" }}>Customer</p>
+                                <p style={{ margin: 0 }}>{selectedPayment.customerName} ({selectedPayment.customerEmail})</p>
+                                <p style={{ margin: 0 }}>{selectedPayment.customerPhone}</p>
+                            </div>
+                            <div>
+                                <p style={{ margin: "0 0 8px", fontSize: "0.875rem", color: "var(--text-secondary)" }}>Raw Data JSON</p>
+                                <pre style={{
+                                    background: "#111827", padding: "16px", borderRadius: "8px",
+                                    fontSize: "0.80rem", color: "#e5e7eb", overflowX: "auto", border: "1px solid #374151"
+                                }}>
+                                    {JSON.stringify((selectedPayment as any).rawData || selectedPayment, null, 2)}
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
