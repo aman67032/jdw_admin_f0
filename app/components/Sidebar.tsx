@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const navItems = [
     {
@@ -49,6 +49,12 @@ const navItems = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+
+    const handleLogout = () => {
+        localStorage.removeItem("jdw_admin_token");
+        router.push("/login");
+    };
 
     return (
         <aside className="sidebar">
@@ -79,11 +85,38 @@ export default function Sidebar() {
                 })}
             </nav>
 
-            <div className="sidebar-footer">
-                <div className="sidebar-footer-info">
+            <div className="sidebar-footer" style={{ borderTop: "1px solid var(--border-color)", padding: "20px 24px", marginTop: "auto" }}>
+                <div className="sidebar-footer-info" style={{ marginBottom: "16px" }}>
                     <div className="footer-dot"></div>
                     <span>Cashfree Connected</span>
                 </div>
+                <button
+                    onClick={handleLogout}
+                    style={{
+                        width: "100%", padding: "10px", background: "rgba(255,255,255,0.05)",
+                        border: "1px solid var(--border-color)", color: "var(--text-secondary)",
+                        borderRadius: "8px", cursor: "pointer", fontSize: "0.875rem",
+                        display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                        transition: "all 0.2s"
+                    }}
+                    onMouseOver={(e) => {
+                        e.currentTarget.style.color = "white";
+                        e.currentTarget.style.background = "rgba(239, 68, 68, 0.2)";
+                        e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.5)";
+                    }}
+                    onMouseOut={(e) => {
+                        e.currentTarget.style.color = "var(--text-secondary)";
+                        e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+                        e.currentTarget.style.borderColor = "var(--border-color)";
+                    }}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Sign Out
+                </button>
             </div>
         </aside>
     );
