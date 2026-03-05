@@ -58,12 +58,17 @@ export default function Sidebar() {
 
     return (
         <aside className="sidebar">
-            <div className="sidebar-header">
-                <div className="sidebar-logo">
-                    <span className="logo-icon">✦</span>
-                    <div>
-                        <h1 className="logo-title">JDW Admin</h1>
-                        <p className="logo-subtitle">Jaipur Design Week</p>
+            <div className="sidebar-header" style={{ padding: "28px 20px" }}>
+                <div className="sidebar-logo" style={{ display: "flex", justifyContent: "center", marginBottom: "8px" }}>
+                    <div className="relative group flex items-center justify-center p-4">
+                        {/* Glow effect behind logo to make dark text visible on dark bg */}
+                        <div className="absolute inset-0 bg-white/10 blur-xl rounded-[40px] scale-125 transition-all duration-500"></div>
+                        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-purple-500/10 blur-2xl rounded-full scale-110"></div>
+                        <img
+                            src="/logo.png"
+                            alt="Jaipur Design Week"
+                            style={{ width: "160px", height: "auto", position: "relative", zIndex: 10, filter: "drop-shadow(0 4px 12px rgba(255,255,255,0.1))" }}
+                        />
                     </div>
                 </div>
             </div>
