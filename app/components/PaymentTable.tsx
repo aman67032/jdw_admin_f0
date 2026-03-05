@@ -43,11 +43,20 @@ export default function PaymentTable({
 
     const filteredPayments = payments.filter((p) => {
         const term = searchTerm.toLowerCase();
+
+        let customMatch = false;
+        if ((p as any).customFields) {
+            customMatch = Object.values((p as any).customFields).some(val =>
+                String(val).toLowerCase().includes(term)
+            );
+        }
+
         return (
             p.customerName?.toLowerCase().includes(term) ||
             p.customerEmail?.toLowerCase().includes(term) ||
             p.orderId?.toLowerCase().includes(term) ||
-            p.customerPhone?.includes(term)
+            p.customerPhone?.includes(term) ||
+            customMatch
         );
     });
 
@@ -184,7 +193,7 @@ export default function PaymentTable({
                                 <th>Phone</th>
                                 <th>Amount</th>
                                 <th>Status</th>
-                                <th>Method</th>
+                                <th>Custom Info</th>
                                 <th>Date</th>
                                 <th>Details</th>
                             </tr>
@@ -210,7 +219,18 @@ export default function PaymentTable({
                                             {payment.status}
                                         </span>
                                     </td>
-                                    <td className="method-cell">{payment.paymentMethod || "—"}</td>
+                                    <td className="custom-info-cell" style={{ maxWidth: "200px" }}>
+                                        {((payment as any).customFields && Object.keys((payment as any).customFields).length > 0) ? (
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '0.75rem', color: "var(--text-secondary)" }}>
+                                                {Object.entries((payment as any).customFields).slice(0, 2).map(([k, v]) => (
+                                                    <span key={k} style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                        <strong style={{ color: "var(--text-primary)" }}>{k.replace(/([A-Z])/g, ' $1').trim()}:</strong> {String(v)}
+                                                    </span>
+                                                ))}
+                                                {Object.keys((payment as any).customFields).length > 2 && <span>...</span>}
+                                            </div>
+                                        ) : <span style={{ color: "var(--text-muted)" }}>—</span>}
+                                    </td>
                                     <td className="date-cell">
                                         {payment.paymentTime
                                             ? new Date(payment.paymentTime).toLocaleDateString("en-IN", {
