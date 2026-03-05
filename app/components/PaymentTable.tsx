@@ -21,6 +21,8 @@ interface PaymentTableProps {
     loading: boolean;
     onSync?: () => void;
     syncing?: boolean;
+    onImport?: (orderId: string) => void;
+    importing?: boolean;
     title: string;
     accentColor?: string;
 }
@@ -30,10 +32,13 @@ export default function PaymentTable({
     loading,
     onSync,
     syncing,
+    onImport,
+    importing,
     title,
     accentColor = "var(--accent-primary)",
 }: PaymentTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
+    const [importOrderId, setImportOrderId] = useState("");
 
     const filteredPayments = payments.filter((p) => {
         const term = searchTerm.toLowerCase();
@@ -108,6 +113,32 @@ export default function PaymentTable({
                         </svg>
                         Export CSV
                     </button>
+
+                    {onImport && (
+                        <div className="import-box" style={{ display: 'flex', gap: '8px' }}>
+                            <input
+                                type="text"
+                                placeholder="Paste Order ID..."
+                                value={importOrderId}
+                                onChange={(e) => setImportOrderId(e.target.value)}
+                                className="search-input"
+                                style={{ width: '150px' }}
+                            />
+                            <button
+                                onClick={() => {
+                                    if (importOrderId.trim()) {
+                                        onImport(importOrderId.trim());
+                                        setImportOrderId(""); // Clear after clicking
+                                    }
+                                }}
+                                className="btn btn-secondary"
+                                disabled={importing || !importOrderId.trim()}
+                            >
+                                {importing ? "..." : "Import"}
+                            </button>
+                        </div>
+                    )}
+
                     {onSync && (
                         <button
                             onClick={onSync}

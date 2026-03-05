@@ -9,6 +9,7 @@ export default function OpenStudioPassPage() {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [syncing, setSyncing] = useState(false);
+    const [importing, setImporting] = useState(false);
 
     const fetchPayments = useCallback(async () => {
         try {
@@ -35,6 +36,29 @@ export default function OpenStudioPassPage() {
             console.error("Sync failed:", err);
         } finally {
             setSyncing(false);
+        }
+    };
+
+    const handleImport = async (orderId: string) => {
+        try {
+            setImporting(true);
+            const res = await fetch(`${API_BASE}/payments/import`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId, passType: "open_studio" })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(`Successfully imported order ${orderId}`);
+                fetchPayments();
+            } else {
+                alert(`Failed to import: ${data.error}`);
+            }
+        } catch (error) {
+            console.error("Import error:", error);
+            alert("An error occurred while importing.");
+        } finally {
+            setImporting(false);
         }
     };
 

@@ -9,6 +9,7 @@ export default function DayPassesPage() {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [syncing, setSyncing] = useState(false);
+    const [importing, setImporting] = useState(false);
 
     const fetchPayments = useCallback(async () => {
         try {
@@ -38,6 +39,29 @@ export default function DayPassesPage() {
         }
     };
 
+    const handleImport = async (orderId: string) => {
+        try {
+            setImporting(true);
+            const res = await fetch(`${API_BASE}/payments/import`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId, passType: "day_pass" })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(`Successfully imported order ${orderId}`);
+                fetchPayments();
+            } else {
+                alert(`Failed to import: ${data.error}`);
+            }
+        } catch (error) {
+            console.error("Import error:", error);
+            alert("An error occurred while importing.");
+        } finally {
+            setImporting(false);
+        }
+    };
+
     return (
         <div>
             <div className="pass-page-header">
@@ -64,6 +88,8 @@ export default function DayPassesPage() {
                 loading={loading}
                 onSync={handleSync}
                 syncing={syncing}
+                onImport={handleImport}
+                importing={importing}
                 accentColor="var(--accent-day-pass)"
             />
         </div>
