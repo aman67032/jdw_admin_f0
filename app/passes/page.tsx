@@ -13,7 +13,10 @@ export default function DayPassesPage() {
 
     const fetchPayments = useCallback(async () => {
         try {
-            const res = await fetch(`${API_BASE}/payments/day_pass`);
+            const token = localStorage.getItem("jdw_admin_token");
+            const res = await fetch(`${API_BASE}/payments/day_pass`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             const data = await res.json();
             if (data.success) setPayments(data.data);
         } catch (err) {
@@ -45,9 +48,13 @@ export default function DayPassesPage() {
     const handleImport = async (orderId: string) => {
         try {
             setImporting(true);
+            const token = localStorage.getItem("jdw_admin_token");
             const res = await fetch(`${API_BASE}/payments/import`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({ orderId, passType: "day_pass" })
             });
             const data = await res.json();

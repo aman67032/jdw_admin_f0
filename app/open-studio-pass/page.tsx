@@ -13,7 +13,10 @@ export default function OpenStudioPassPage() {
 
     const fetchPayments = useCallback(async () => {
         try {
-            const res = await fetch(`${API_BASE}/payments/open_studio`);
+            const token = localStorage.getItem("jdw_admin_token");
+            const res = await fetch(`${API_BASE}/payments/open_studio`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             const data = await res.json();
             if (data.success) setPayments(data.data);
         } catch (err) {
@@ -45,9 +48,13 @@ export default function OpenStudioPassPage() {
     const handleImport = async (orderId: string) => {
         try {
             setImporting(true);
+            const token = localStorage.getItem("jdw_admin_token");
             const res = await fetch(`${API_BASE}/payments/import`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({ orderId, passType: "open_studio" })
             });
             const data = await res.json();

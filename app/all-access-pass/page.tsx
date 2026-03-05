@@ -13,7 +13,10 @@ export default function AllAccessPassPage() {
 
     const fetchPayments = useCallback(async () => {
         try {
-            const res = await fetch(`${API_BASE}/payments/all_access`);
+            const token = localStorage.getItem("jdw_admin_token");
+            const res = await fetch(`${API_BASE}/payments/all_access`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             const data = await res.json();
             if (data.success) setPayments(data.data);
         } catch (err) {
@@ -30,7 +33,10 @@ export default function AllAccessPassPage() {
     const handleSync = async () => {
         setSyncing(true);
         try {
-            await fetch(`${API_BASE}/payments/sync/all_access`);
+            const token = localStorage.getItem("jdw_admin_token");
+            await fetch(`${API_BASE}/payments/sync/all_access`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             await fetchPayments();
         } catch (err) {
             console.error("Sync failed:", err);
@@ -42,9 +48,13 @@ export default function AllAccessPassPage() {
     const handleImport = async (orderId: string) => {
         try {
             setImporting(true);
+            const token = localStorage.getItem("jdw_admin_token");
             const res = await fetch(`${API_BASE}/payments/import`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({ orderId, passType: "all_access" })
             });
             const data = await res.json();
