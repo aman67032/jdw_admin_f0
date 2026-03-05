@@ -44,55 +44,53 @@ export default function LoginPage() {
         <div className="login-container">
             <div className="login-graphic">
                 <div className="graphic-overlay">
-                    <h1>Jaipur Design Week 2026</h1>
-                    <p>Admin Dashboard</p>
+                    <span className="graphic-badge">Admin Portal</span>
+                    <h1>Jaipur Design<br />Week 2026</h1>
+                    <p>
+                        Manage and track Cashfree payments, passes, and attendee data all from a centralized, secure dashboard.
+                    </p>
                 </div>
             </div>
 
             <div className="login-form-wrapper">
                 <div className="login-box">
-                    <h2 style={{ marginBottom: "8px", fontSize: "1.75rem", color: "white" }}>Welcome Back</h2>
-                    <p style={{ color: "var(--text-secondary)", marginBottom: "32px", fontSize: "0.875rem" }}>
-                        Enter your admin credentials to access the Cashfree payments dashboard
+                    <h2>Welcome Back</h2>
+                    <p>
+                        Enter your admin credentials to securely access the payments dashboard
                     </p>
 
                     <form onSubmit={handleLogin}>
                         {error && (
-                            <div style={{
-                                padding: "12px", background: "rgba(239, 68, 68, 0.1)",
-                                color: "#ef4444", borderRadius: "8px", marginBottom: "24px",
-                                fontSize: "0.875rem", border: "1px solid rgba(239, 68, 68, 0.2)"
-                            }}>
+                            <div className="error-message">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
                                 {error}
                             </div>
                         )}
 
-                        <div style={{ marginBottom: "20px" }}>
-                            <label style={{ display: "block", marginBottom: "8px", color: "var(--text-secondary)", fontSize: "0.875rem" }}>Username</label>
+                        <div className="login-input-group">
+                            <label>Username</label>
                             <input
                                 type="text"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                style={{
-                                    width: "100%", padding: "12px 16px", borderRadius: "8px",
-                                    background: "rgba(255, 255, 255, 0.05)", border: "1px solid var(--border-color)",
-                                    color: "white", fontSize: "1rem", outline: "none"
-                                }}
+                                className="login-input"
+                                placeholder="Enter admin username"
                                 required
                             />
                         </div>
 
-                        <div style={{ marginBottom: "32px" }}>
-                            <label style={{ display: "block", marginBottom: "8px", color: "var(--text-secondary)", fontSize: "0.875rem" }}>Password</label>
+                        <div className="login-input-group" style={{ marginBottom: "32px" }}>
+                            <label>Password</label>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                style={{
-                                    width: "100%", padding: "12px 16px", borderRadius: "8px",
-                                    background: "rgba(255, 255, 255, 0.05)", border: "1px solid var(--border-color)",
-                                    color: "white", fontSize: "1rem", outline: "none"
-                                }}
+                                className="login-input"
+                                placeholder="Enter your password"
                                 required
                             />
                         </div>
@@ -100,15 +98,9 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            style={{
-                                width: "100%", padding: "14px", borderRadius: "8px",
-                                background: "var(--accent-primary)", color: "white",
-                                border: "none", fontSize: "1rem", fontWeight: 600,
-                                cursor: loading ? "not-allowed" : "pointer",
-                                opacity: loading ? 0.7 : 1, transition: "0.2s"
-                            }}
+                            className="login-btn"
                         >
-                            {loading ? "Signing in..." : "Sign In"}
+                            {loading ? "Authenticating..." : "Sign In"}
                         </button>
                     </form>
                 </div>
