@@ -14,6 +14,9 @@ interface Payment {
     paymentMethod: string;
     paymentTime: string;
     createdAt: string;
+    passType?: string;
+    // invoiceFile is excluded from the list payload to save bandwidth, 
+    // but the presence of school_pass implies an invoice might exist
 }
 
 interface PaymentTableProps {
@@ -240,7 +243,7 @@ export default function PaymentTable({
                                             })
                                             : "—"}
                                     </td>
-                                    <td>
+                                    <td style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                                         <button
                                             onClick={() => setSelectedPayment(payment)}
                                             className="btn btn-secondary"
@@ -248,6 +251,17 @@ export default function PaymentTable({
                                         >
                                             View Info
                                         </button>
+                                        {payment.passType === "school_pass" && (
+                                            <a
+                                                href={`${process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api"}/payments/invoice/${payment.orderId}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn btn-primary"
+                                                style={{ padding: "4px 8px", fontSize: "0.75rem", background: "var(--accent-success)", border: "none", color: "white", textDecoration: "none", borderRadius: "6px" }}
+                                            >
+                                                Invoice
+                                            </a>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

@@ -11,8 +11,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     useEffect(() => {
         const token = localStorage.getItem("jdw_admin_token");
+        const isPublicRoute = pathname === "/login" || pathname === "/school-registration";
 
-        if (!token && pathname !== "/login") {
+        if (!token && !isPublicRoute) {
             setIsAuthenticated(false);
             router.push("/login"); // Redirect to login
         } else if (token && pathname === "/login") {
@@ -25,8 +26,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     // Show nothing while verifying to prevent flickering
     if (isAuthenticated === null) return <div style={{ height: "100vh", background: "var(--bg-main)" }} />;
 
-    // Render Login Page without Sidebar
-    if (pathname === "/login") {
+    const isPublicRoute = pathname === "/login" || pathname === "/school-registration";
+
+    // Render Public Pages without Sidebar
+    if (isPublicRoute) {
         return <>{children}</>;
     }
 
