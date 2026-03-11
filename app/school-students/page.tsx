@@ -72,6 +72,34 @@ export default function SchoolStudentsPage() {
         }
     };
 
+    const [approvingId, setApprovingId] = useState<string | null>(null);
+
+    const handleApprove = async (orderId: string) => {
+        try {
+            setApprovingId(orderId);
+            const token = localStorage.getItem("jdw_admin_token");
+            const res = await fetch(`${API_BASE}/payments/${orderId}/status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: "PAID" })
+            });
+            const data = await res.json();
+            if (data.success) {
+                fetchPayments(); // Refresh list
+            } else {
+                alert(`Failed to approve: ${data.error}`);
+            }
+        } catch (error) {
+            console.error("Approve error:", error);
+            alert("An error occurred while approving.");
+        } finally {
+            setApprovingId(null);
+        }
+    };
+
     return (
         <div>
             <div className="pass-page-header">
@@ -100,6 +128,8 @@ export default function SchoolStudentsPage() {
                 syncing={syncing}
                 onImport={handleImport}
                 importing={importing}
+                onApprove={handleApprove}
+                approvingId={approvingId}
                 accentColor="#10b981"
             />
         </div>

@@ -26,6 +26,8 @@ interface PaymentTableProps {
     syncing?: boolean;
     onImport?: (orderId: string) => void;
     importing?: boolean;
+    onApprove?: (orderId: string) => void;
+    approvingId?: string | null;
     title: string;
     accentColor?: string;
 }
@@ -37,6 +39,8 @@ export default function PaymentTable({
     syncing,
     onImport,
     importing,
+    onApprove,
+    approvingId,
     title,
     accentColor = "var(--accent-primary)",
 }: PaymentTableProps) {
@@ -251,6 +255,19 @@ export default function PaymentTable({
                                         >
                                             View Info
                                         </button>
+                                        {payment.status === "PENDING" && onApprove && (
+                                            <button
+                                                onClick={() => {
+                                                    onApprove(payment.orderId);
+                                                    setSelectedPayment(null); // Optional: close modal if it was open, or just leave it since order updates
+                                                }}
+                                                className="btn btn-primary"
+                                                disabled={approvingId === payment.orderId}
+                                                style={{ padding: "4px 8px", fontSize: "0.75rem", background: "var(--accent-info)", border: "none", color: "white", borderRadius: "6px" }}
+                                            >
+                                                {approvingId === payment.orderId ? "..." : "Approve"}
+                                            </button>
+                                        )}
                                         {payment.passType === "school_pass" && (
                                             <a
                                                 href={`${process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api"}/payments/invoice/${payment.orderId}`}
@@ -313,9 +330,23 @@ export default function PaymentTable({
                                             <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Order ID</span>
                                             <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)", fontSize: "0.85rem" }}>{selectedPayment.orderId}</span>
                                         </div>
-                                        <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px", alignItems: "center" }}>
                                             <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Status</span>
-                                            <span className={`badge ${getStatusBadge(selectedPayment.status)}`} style={{ fontSize: "0.75rem" }}>{selectedPayment.status}</span>
+                                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                                <span className={`badge ${getStatusBadge(selectedPayment.status)}`} style={{ fontSize: "0.75rem" }}>{selectedPayment.status}</span>
+                                                {selectedPayment.status === "PENDING" && onApprove && (
+                                                    <button
+                                                        onClick={() => {
+                                                            onApprove(selectedPayment.orderId);
+                                                            setSelectedPayment({ ...selectedPayment, status: "PAID" }); // Optimistic UI update
+                                                        }}
+                                                        disabled={approvingId === selectedPayment.orderId}
+                                                        style={{ padding: "2px 8px", fontSize: "0.7rem", background: "var(--accent-info)", border: "none", color: "white", borderRadius: "4px", cursor: "pointer" }}
+                                                    >
+                                                        {approvingId === selectedPayment.orderId ? "..." : "Approve"}
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                         <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border-primary)", paddingBottom: "8px" }}>
                                             <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Amount Paid</span>
