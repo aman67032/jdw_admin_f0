@@ -23,14 +23,8 @@ export default function SchoolRegistrationPage() {
         e.preventDefault();
         setError("");
 
-        if (!isCouponValid) {
-            // No coupon -> go to cashfree
-            window.location.href = "https://payments.cashfree.com/forms/schooljdw";
-            return;
-        }
-
-        if (!invoiceFile) {
-            setError("Please upload an invoice file to apply the coupon.");
+        if (!isCouponValid && !invoiceFile) {
+            setError("Please upload your invoice receipt as proof of payment.");
             return;
         }
 
@@ -46,7 +40,9 @@ export default function SchoolRegistrationPage() {
                 SchoolName: schoolName,
                 Grade: grade
             }));
-            formData.append("invoice", invoiceFile);
+            if (invoiceFile) {
+                formData.append("invoice", invoiceFile);
+            }
 
             const res = await fetch(`${API_BASE}/payments/school-registration`, {
                 method: "POST",
@@ -104,10 +100,22 @@ export default function SchoolRegistrationPage() {
                 <div className="absolute top-0 left-0 w-full h-[6px] bg-gradient-to-r from-emerald-400 to-indigo-500"></div>
 
                 <div className="p-8 md:p-10">
-                    <div className="flex flex-col items-center text-center mb-8">
+                    <div className="flex flex-col items-center text-center mb-6">
                         <img src="/logo.png" alt="Jaipur Design Week" className="h-16 mb-6 drop-shadow-sm" />
                         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">School Student Registration</h1>
                         <p className="text-slate-500 font-medium">Register for the JDW School Studio Pass</p>
+                    </div>
+
+                    <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 mb-8 text-sm text-indigo-900 shadow-sm">
+                        <p className="font-semibold mb-1">Step 1: Complete your payment</p>
+                        <p className="mb-2">If you do not have a coupon code, please complete your payment at the link below first, and download your invoice.</p>
+                        <a href="https://payments.cashfree.com/forms/schooljdw" target="_blank" rel="noopener noreferrer" className="inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-700 transition">
+                            Pay via Cashfree ↗
+                        </a>
+                    </div>
+
+                    <div className="mb-6 border-b border-slate-200 pb-2">
+                        <p className="font-semibold text-slate-800">Step 2: Submit Details</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -174,34 +182,37 @@ export default function SchoolRegistrationPage() {
                                 />
                             </div>
 
-                            {/* Show file upload ONLY if coupon is explicitly MAX26 */}
-                            <div className={`transition-all duration-500 overflow-hidden ${isCouponValid ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+                            {/* Show file upload ONLY if coupon is NOT applied */}
+                            <div className={`transition-all duration-500 overflow-hidden ${!isCouponValid ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-bold text-emerald-700 ml-1">Upload Required Invoice</label>
-                                    <p className="text-xs text-slate-500 ml-1 mb-1">Since you used coupon <strong>MAX26</strong>, please upload your invoice.</p>
+                                    <label className="text-sm font-bold text-indigo-700 ml-1">Upload Payment Invoice (Required)</label>
+                                    <p className="text-xs text-slate-500 ml-1 mb-1">Please upload the receipt/invoice you received from Cashfree.</p>
                                     <input
                                         type="file"
                                         accept="image/*,application/pdf"
-                                        required={isCouponValid}
+                                        required={!isCouponValid}
                                         onChange={e => setInvoiceFile(e.target.files?.[0] || null)}
-                                        className="w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition"
+                                        className="w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition"
                                     />
                                 </div>
                             </div>
+
+                            {isCouponValid && (
+                                <div className="mt-2 text-sm text-emerald-600 font-bold bg-emerald-50 p-3 rounded-xl flex items-center gap-2">
+                                    <span className="text-lg">✓</span> Valid coupon applied. No payment invoice required!
+                                </div>
+                            )}
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
                             className={`mt-4 w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg text-lg flex justify-center items-center gap-2
-                                ${loading ? 'bg-indigo-400 cursor-not-allowed' : (
-                                    isCouponValid
-                                        ? 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-emerald-500/30'
-                                        : 'bg-slate-900 hover:bg-indigo-600 hover:shadow-indigo-500/30'
-                                )} hover:-translate-y-0.5`}
+                                ${loading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-slate-900 hover:bg-indigo-600 hover:shadow-indigo-500/30'
+                                } hover:-translate-y-0.5`}
                         >
                             {loading && <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>}
-                            {isCouponValid ? "Submit Registration" : "Continue to Payment"}
+                            Submit Registration
                         </button>
                     </form>
                 </div>
