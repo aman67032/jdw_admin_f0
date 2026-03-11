@@ -16,8 +16,29 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         if (!token && !isPublicRoute) {
             setIsAuthenticated(false);
             router.push("/login"); // Redirect to login
-        } else if (token && pathname === "/login") {
-            router.push("/"); // Redirect to dashboard if logged in
+            return;
+        }
+        
+        if (token) {
+            const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api";
+            fetch(`${API_BASE}/auth/verify`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setIsAuthenticated(true);
+                    if (pathname === "/login") router.push("/");
+                } else {
+                    localStorage.removeItem("jdw_admin_token");
+                    setIsAuthenticated(false);
+                    if (!isPublicRoute) router.push("/login");
+                }
+            })
+            .catch(err => {
+                console.error("Verification error", err);
+                setIsAuthenticated(true);
+            });
         } else {
             setIsAuthenticated(true);
         }
