@@ -13,6 +13,7 @@ interface SummaryData {
     day_pass: { totalOrders: number; totalRevenue: number };
     open_studio: { totalOrders: number; totalRevenue: number };
     all_access: { totalOrders: number; totalRevenue: number };
+    school_pass: { totalOrders: number; totalRevenue: number };
   };
 }
 
@@ -116,6 +117,18 @@ export default function Dashboard() {
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+              </svg>
+            }
+          />
+          <StatsCard
+            title="School Students"
+            value={summary?.byPassType?.school_pass?.totalOrders || 0}
+            subtitle={formatCurrency(summary?.byPassType?.school_pass?.totalRevenue || 0)}
+            accentColor="var(--accent-school)"
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
               </svg>
             }
           />
